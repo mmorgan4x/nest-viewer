@@ -1,7 +1,12 @@
-// import JSZip from 'jsZip';
+//// @ts-check
+ /** @type {import("jsZip")} */ var JSZip;
+ /** @type {import("highcharts")} */ var Highcharts;
+ /** @type {import("jquery")} */ var $;
 
-document.getElementById('file-input').onchange = async function () {
-    let data = await parseZip(this.files[0]);
+async function uploadFile(file) {
+    $('#loading').removeClass('hide');
+
+    let data = await parseZip(file);
 
     data = data.filter(t => !!t.Date && !!t.Time && !!t['avg(temp)'] && !!t['avg(humidity)']);
     console.log(data)
@@ -14,7 +19,7 @@ document.getElementById('file-input').onchange = async function () {
     data = data.slice(0, 10000)
 
     drawChart(data);
-};
+}
 
 async function parseZip(file) {
     let jsZip = new JSZip();
@@ -52,6 +57,9 @@ function toF(celcius) {
 
 function drawChart(data) {
 
+    $('#landing').addClass('hide');
+    $('#chart').removeClass('hide');
+
     let plotlines = [];
     let start = new Date(data[0].date)
     start = new Date(start.getFullYear(), start.getMonth(), start.getDate(), 0, 0, 0);
@@ -66,14 +74,21 @@ function drawChart(data) {
             zoomType: 'x',
             type: 'line',
             panning: true,
-            panKey: 'shift'
+            panKey: 'shift',
+            events: {
+                load: e => $('#loading').addClass('hide')
+            }
         },
+        title: false,
+        subtitle: false,
+        colors: ['#db3236', '#f4c20d', '#4885ed ', , '#3cba54 '],
         xAxis: {
             type: 'datetime',
             plotLines: plotlines.map(t => ({ value: t }))
         },
         yAxis: {
             min: 0,
+            title: false
         },
         tooltip: {
             xDateFormat: '%Y-%m-%d %H:%M',
@@ -94,3 +109,33 @@ function drawChart(data) {
         }]
     });
 }
+
+function init() {
+
+    //file drag and drop
+    var dragCounter = 0;
+    $('body').on('dragover drop', function (e) {
+        e.preventDefault();
+    })
+    $('body').on('dragenter', function () {
+        dragCounter++;
+        $('.drop-area').addClass('active');
+    })
+    $('body').on('dragleave', function (e) {
+        dragCounter--;
+        if (dragCounter === 0) { $('.drop-area').removeClass('active'); }
+    })
+    $('body').on('drop', function (e) {
+        dragCounter = 0
+        $('.drop-area').removeClass('active');
+        let droppedFiles = e.originalEvent.dataTransfer.files;
+        uploadFile(droppedFiles[0]);
+    });
+
+    //file input upload
+    $('#file-input').on('change', function (e) {
+        uploadFile(this.files[0]);
+    });
+}
+
+init();

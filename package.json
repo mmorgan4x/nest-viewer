@@ -9,6 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "highcharts": "^10.0.0",
+    "jquery": "^3.6.0",
     "jszip": "^3.7.1"
   }
 }

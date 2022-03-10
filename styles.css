@@ -1,7 +1,76 @@
 body {
-    margin: 0;
+  margin: 0;
 }
 
-#chart{
-    height: calc(100% - 21px);
+.logo {
+  height: 44px;
+  image-rendering: crisp-edges;
+}
+.navbar-brand {
+  color: #58585a !important;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.content {
+  height: calc(100% - 70px);
+  position: relative;
+}
+
+#chart {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+#loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 3rem;
+}
+
+.hide {
+  display: none !important;
+}
+
+#landing {
+  padding: 50px;
+}
+
+.drop-area {
+  background-color: #eee;
+  height: calc(100vh - 170px);
+  outline: 2px dashed #999;
+  outline-offset: -12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+}
+.drop-area.active {
+  opacity: 0.5;
+}
+
+.drop-area .icon {
+  font-size: 160px;
+  color: #999;
+  margin: 1rem;
+}
+
+.drop-area label {
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.drop-area label:hover {
+  text-decoration: underline;
 }
