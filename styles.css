@@ -1,0 +1,7 @@
+body {
+    margin: 0;
+}
+
+#chart{
+    height: calc(100% - 21px);
+}
