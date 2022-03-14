@@ -1,15 +1,17 @@
 body {
   margin: 0;
+  overflow: hidden;
 }
 
 .logo {
-  height: 44px;
+  height: 36px;
   image-rendering: crisp-edges;
+  margin-right: 0.75rem;
 }
 .navbar-brand {
-  color: #58585a !important;
   font-size: 1.5rem;
-  font-weight: bold;
+  display: flex;
+  align-items: center;
 }
 
 .content {
@@ -35,7 +37,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 3rem;
+  font-size: 2rem;
 }
 
 .hide {
@@ -74,3 +76,24 @@ body {
 .drop-area label:hover {
   text-decoration: underline;
 }
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  position: absolute;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+input.nav-link,
+select.nav-link {
+  position: relative;
+  border: none;
+  background: none !important;
+  outline: none;
+  width: 100px;
+}
+

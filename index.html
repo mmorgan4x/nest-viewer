@@ -6,20 +6,46 @@
     <link rel="stylesheet" href="styles.css">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
+
 </head>
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#"><img class="logo" src="images/nest.png" /> Data Viewer</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <a class="navbar-brand" href="#"><img class="logo" src="images/nest.png" /> Nest Data Viewer</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 hide">
+                    <li class="nav-item">
+                        <input id="startDate" type="date" class="nav-link">
+                    </li>
+                    <span class="navbar-text">to</span>
+                    <li class="nav-item me-4">
+                        <input id="endDate" type="date" class="nav-link">
+                    </li>
 
+                    <li class="nav-item me-4">
+                        <select id="increment" class="nav-link" style="width:90px">
+                            <option value="1">15 min</option>
+                            <option value="4">1 hour</option>
+                            <option value="24">6 hour</option>
+                            <option value="96">1 day</option>
+                            <option value="672">1 week</option>
+                        </select>
+                    </li>
+                    <li class="nav-item">
+                        <select id="degree" class="nav-link" style="width:55px">
+                            <option value="F">°F</option>
+                            <option value="C">°C</option>
+                        </select>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
