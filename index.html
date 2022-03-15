@@ -11,17 +11,21 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
 
+    <title>Nest Data Viewer</title>
+    <link rel="icon" href="images/nest.webp" type="image/x-icon">
 </head>
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#"><img class="logo" src="images/nest.png" /> Nest Data Viewer</a>
+            <a class="navbar-brand" href="#"><img class="logo" src="images/nest.webp" /> Nest Data Viewer</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 hide">
+                <span id="file-name" class="navbar-text mx-auto"></span>
+
+                <ul class="navbar-nav mb-2 mb-lg-0 hide">
                     <li class="nav-item">
                         <input id="startDate" type="date" class="nav-link">
                     </li>

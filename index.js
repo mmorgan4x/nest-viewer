@@ -7,6 +7,7 @@ let data = [];
 
 async function uploadFile(file) {
     $('#loading').removeClass('hide');
+    $('#file-name').text(file.name);
 
     data = await parseZip(file);
     data = data.filter(t => !!t.Date && !!t.Time && !!t['avg(temp)'] && !!t['avg(humidity)']);
@@ -108,10 +109,8 @@ function drawChart(filteredData, cb) {
     Highcharts.chart('chart', {
         chart: {
             animation: false,
-            zoomType: 'x',
             type: 'line',
             panning: true,
-            panKey: 'shift',
             events: { load: cb }
         },
         title: false,
@@ -143,6 +142,29 @@ function drawChart(filteredData, cb) {
             tooltip: { valueSuffix: '%' },
         }]
     });
+
+    initZoomControls()
+}
+
+function initZoomControls() {
+    let chart = $("#chart").highcharts();
+
+    $('#chart svg').on('mousewheel', function (e) {
+        let mouseX = chart.pointer.normalize(e.originalEvent);
+
+        let delta = e.originalEvent.wheelDelta;
+        let zoomFactor = (delta > 0 ? -1 : 1) * .2;
+        let valX = chart.xAxis[0].toValue(mouseX.chartX);
+
+        var extremes = chart.xAxis[0].getExtremes();
+        var range = extremes.max - extremes.min;
+        var min = Math.max(extremes.dataMin, extremes.min - (range * zoomFactor) * ((valX - extremes.min) / range));
+        var max = Math.min(extremes.dataMax, extremes.max + (range * zoomFactor) * ((extremes.max - valX) / range));
+
+        chart.xAxis[0].setExtremes(min, max);
+        chart.showResetZoom();
+    });
+
 }
 
 function init() {

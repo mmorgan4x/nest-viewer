@@ -1,0 +1,6 @@
+help screen
+filename in toolbar
+better chunking
+upload error msg
+no data display
+reload btn
