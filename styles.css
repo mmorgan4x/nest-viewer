@@ -28,7 +28,7 @@ body {
 }
 
 #loading {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
@@ -97,3 +97,12 @@ select.nav-link {
   width: 100px;
 }
 
+.nav-link {
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+.nav-link:active,
+.nav-link:hover {
+  background: rgba(0, 0, 0, 0.05) !important;
+}

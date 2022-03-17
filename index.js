@@ -190,9 +190,7 @@ function init() {
     });
 
     //file input upload
-    $('#file-input').on('change', function (e) {
-        uploadFile(this.files[0]);
-    });
+    $('#file-input').on('change', function (e) { uploadFile(this.files[0]) });
 
     // filter inputs
     $('#endDate').val(moment().format('YYYY-MM-DD'));
@@ -200,6 +198,13 @@ function init() {
     $('input[type="date"]').on('mousedown', function (e) { e.preventDefault(); });
     $('input[type="date"]').on('change', function () { update() });
     $('select').on('change', function () { update() });
+
+    $('.remove-btn').on('click', function () {
+        $('#landing').removeClass('hide');
+        $('#chart').addClass('hide');
+        $('.navbar-nav').addClass('hide');
+        $('#file-input').val('')
+    });
 
 }
 
