@@ -69,11 +69,13 @@ body {
 }
 
 .drop-area label {
-  font-weight: bold;
   cursor: pointer;
 }
+.drop-area .label {
+  font-weight: bold;
+}
 
-.drop-area label:hover {
+.drop-area label:hover .label {
   text-decoration: underline;
 }
 
