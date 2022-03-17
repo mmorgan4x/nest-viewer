@@ -51,14 +51,11 @@ function parseCSV(csvStr) {
     return rows;
 }
 
-function toF(celcius) {
-    return;
-}
-
 function update() {
     $('#landing').addClass('hide');
     $('#chart').removeClass('hide');
     $('.navbar-nav').removeClass('hide');
+    $('.help-btn').addClass('hide');
 
     //units
     let isCelcius = $('#degree').val() == 'C';
@@ -91,6 +88,8 @@ function update() {
     }
     filteredData = chunkData;
 
+
+    //draw chart
     drawChart(filteredData, () => $('#loading').addClass('hide'));
 }
 
@@ -106,7 +105,8 @@ function drawChart(filteredData, cb) {
         }
     }
 
-    Highcharts.chart('chart', {
+    //init chart
+    let chart = Highcharts.chart('chart', {
         chart: {
             animation: false,
             type: 'line',
@@ -143,12 +143,7 @@ function drawChart(filteredData, cb) {
         }]
     });
 
-    initZoomControls()
-}
-
-function initZoomControls() {
-    let chart = $("#chart").highcharts();
-
+    //zoom controls
     $('#chart svg').on('mousewheel', function (e) {
         let mouseX = chart.pointer.normalize(e.originalEvent);
 
@@ -164,10 +159,17 @@ function initZoomControls() {
         chart.xAxis[0].setExtremes(min, max);
         chart.showResetZoom();
     });
-
 }
 
-function init() {
+function reset() {
+    $('#landing').removeClass('hide');
+    $('#chart').addClass('hide');
+    $('.navbar-nav').addClass('hide');
+    $('.help-btn').removeClass('hide');
+    $('#file-input').val('')
+}
+
+(function init() {
 
     //file drag and drop
     var dragCounter = 0;
@@ -185,27 +187,18 @@ function init() {
     $('body').on('drop', function (e) {
         dragCounter = 0
         $('.drop-area').removeClass('active');
-        let droppedFiles = e.originalEvent.dataTransfer.files;
-        uploadFile(droppedFiles[0]);
+        uploadFile(e.originalEvent.dataTransfer.files[0]);
     });
-
-    //file input upload
-    $('#file-input').on('change', function (e) { uploadFile(this.files[0]) });
 
     // filter inputs
     $('#endDate').val(moment().format('YYYY-MM-DD'));
     $('#startDate').val(moment().subtract(1, 'M').format('YYYY-MM-DD'))
     $('input[type="date"]').on('mousedown', function (e) { e.preventDefault(); });
-    $('input[type="date"]').on('change', function () { update() });
-    $('select').on('change', function () { update() });
+    $('input[type="date"],select').on('change', function () { update() });
 
-    $('.remove-btn').on('click', function () {
-        $('#landing').removeClass('hide');
-        $('#chart').addClass('hide');
-        $('.navbar-nav').addClass('hide');
-        $('#file-input').val('')
-    });
+    //file input upload
+    $('#file-input').on('change', function (e) { uploadFile(this.files[0]) });
+    //reset file
+    $('.remove-btn').on('click', function () { reset() });
+})();
 
-}
-
-init();

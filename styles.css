@@ -99,12 +99,30 @@ select.nav-link {
   width: 100px;
 }
 
-.nav-link {
+.navbar-nav .nav-link {
   cursor: pointer;
   border-radius: 2px;
+  padding-right: 0.5rem;
+  padding-left: 0.5rem;
 }
 
 .nav-link:active,
 .nav-link:hover {
   background: rgba(0, 0, 0, 0.05) !important;
+}
+
+.help-btn {
+  cursor: pointer;
+  font-size: 1.5rem;
+  border-radius: 100px;
+  padding: 8px;
+}
+
+.help-btn:active,
+.help-btn:hover {
+  background: rgba(0, 0, 0, 0.05) !important;
+}
+
+.help-btn + .dropdown-menu {
+  white-space: nowrap;
 }

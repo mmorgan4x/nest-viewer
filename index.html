@@ -16,43 +16,55 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-light bg-light">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#"><img class="logo" src="images/nest.webp" /> Nest Data Viewer</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav mb-2 mb-lg-0 flex-grow-1 hide">
-                    <div id="file-name" class="navbar-text ms-auto"></div>
-                    <div class="nav-item ms-1 me-auto">
-                        <i class="bi bi-x nav-link remove-btn mt-1"></i>
-                    </div>
+            <a class="navbar-brand" href=""><img class="logo" src="images/nest.webp" /> Nest Data Viewer</a>
 
-                    <li class="nav-item">
-                        <input id="startDate" type="date" class="nav-link">
-                    </li>
-                    <span class="navbar-text mx-1">to</span>
-                    <li class="nav-item me-4">
-                        <input id="endDate" type="date" class="nav-link">
-                    </li>
+            <div class="navbar-nav flex-grow-1 flex-row hide">
+                <div id="file-name" class="navbar-text ms-auto"></div>
+                <div class="nav-item ms-1 me-auto">
+                    <i class="bi bi-x nav-link remove-btn mt-1" title="Remove File"></i>
+                </div>
 
-                    <li class="nav-item me-4">
-                        <select id="increment" class="nav-link pe-0" style="width:80px">
-                            <option value="1">15 min</option>
-                            <option value="4">1 hour</option>
-                            <option value="24">6 hour</option>
-                            <option value="96">1 day</option>
-                            <option value="672">1 week</option>
-                        </select>
-                    </li>
-                    <li class="nav-item">
-                        <select id="degree" class="nav-link pe-0" style="width:45px">
-                            <option value="F">°F</option>
-                            <option value="C">°C</option>
-                        </select>
-                    </li>
-                </ul>
+                <div class="nav-item">
+                    <input id="startDate" type="date" class="nav-link" title="Start Date">
+                </div>
+                <span class="navbar-text mx-1">to</span>
+                <div class="nav-item me-4">
+                    <input id="endDate" type="date" class="nav-link" title="End Date">
+                </div>
+
+                <div class="nav-item me-4">
+                    <select id="increment" class="nav-link pe-0" style="width:80px" title="Data Increment">
+                        <option value="1">15 min</option>
+                        <option value="4">1 hour</option>
+                        <option value="24">6 hour</option>
+                        <option value="96">1 day</option>
+                        <option value="672">1 week</option>
+                    </select>
+                </div>
+                <div class="nav-item">
+                    <select id="degree" class="nav-link pe-0" style="width:45px" title="Unit">
+                        <option value="F">°F</option>
+                        <option value="C">°C</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="dropdown">
+                <div class="help-btn" data-bs-toggle="dropdown"><i class="bi bi-question-circle" title="Help"></i></div>
+                <div class="dropdown-menu dropdown-menu-end p-4">
+                    <h4>How to get the data file?</h4>
+                    <hr>
+                    <ul>
+                        <li>Head to <a href="https://takeout.google.com" target="_blank">Google Takeout</a></li>
+                        <li>Select your <b>Nest</b> data to export</li>
+                        <li>In types selected, select <b>thermostats</b></li>
+                        <li>Continue to the <b>Nest step</b></li>
+                        <li><b>Create Export</b> and dowload the .zip file</li>
+                        <li>Upload the zip file here</li>
+                    </ul>
+                </div>
             </div>
         </div>
     </nav>
@@ -69,9 +81,6 @@
                 </label>
             </div>
         </div>
-
-
-
 
         <div id="chart" class="hide"></div>
         <div id="loading" class="hide">
