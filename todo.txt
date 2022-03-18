@@ -1,2 +1,0 @@
-better chunking
-select enable/disable series

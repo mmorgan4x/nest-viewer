@@ -89,17 +89,14 @@ function update() {
     filteredData = filteredData.filter(t => t.date > filterStart.valueOf() && t.date < filterEnd.valueOf());
 
     //data chunking
-    let increment = +$('#increment').val();
-    let chunkData = [];
-    for (let i = 0; i < filteredData.length; i += increment) {
-        let chunk = filteredData.slice(i, i + increment);
-        chunkData.push({
-            date: chunk[0].date,
-            temp: chunk.reduce((a, b) => a + b.temp, 0) / chunk.length,
-            humidity: chunk.reduce((a, b) => a + b.humidity, 0) / chunk.length
-        });
-    }
-    filteredData = chunkData;
+    let [, increment, unit] = $('#increment').val().toString().match(/(\d+)(.+)/);
+    let grouped = groupBy(filteredData, t => roundDate(moment(t.date), +increment, unit).valueOf());
+    
+    filteredData = grouped.map(t => ({
+        date: t.key,
+        temp: t.value.reduce((a, b) => a + b.temp, 0) / t.value.length,
+        humidity: t.value.reduce((a, b) => a + b.humidity, 0) / t.value.length,
+    }));
 
     //draw chart
     if (filteredData.length) {
@@ -110,6 +107,25 @@ function update() {
         $('#loading').addClass('hide');
         $('#no-data').removeClass('hide');
     }
+}
+
+function groupBy(list, keyGetter) {
+    const map = new Map();
+    list.forEach((item) => {
+        const key = keyGetter(item);
+        const collection = map.get(key);
+        if (!collection) {
+            map.set(key, [item]);
+        } else {
+            collection.push(item);
+        }
+    });
+    return Array.from(map, ([key, value]) => ({ key, value }));
+}
+
+function roundDate(date, increment, unit) {
+    let nextMap = { 'm': 'h', 'h': 'd', 'd': 'w' }
+    return date.clone().startOf(nextMap[unit]).add(Math.floor(date.get(unit) / increment) * increment, unit);
 }
 
 function drawChart(filteredData, cb) {
@@ -164,16 +180,18 @@ function drawChart(filteredData, cb) {
         },
         time: { useUTC: false },
 
-        series: [{
-            name: 'Temperature',
-            data: filteredData.map(t => ([t.date, t.temp])),
-            tooltip: { valueSuffix: `&deg${$('#degree').val()}` },
-        },
-        {
-            name: 'Humidity',
-            data: filteredData.map(t => ([t.date, t.humidity])),
-            tooltip: { valueSuffix: '%' },
-        }]
+        series: [
+            {
+                name: 'Temperature',
+                data: filteredData.map(t => ([t.date, t.temp])),
+                tooltip: { valueSuffix: `&deg${$('#degree').val()}` },
+            },
+            {
+                name: 'Humidity',
+                data: filteredData.map(t => ([t.date, t.humidity])),
+                tooltip: { valueSuffix: '%' },
+            }
+        ]
     });
 
     //zoom controls
@@ -202,7 +220,7 @@ function reset() {
     $('#no-data').addClass('hide');
     $('#file-input').val('');
     $('#endDate').val(moment().format('YYYY-MM-DD'));
-    $('#startDate').val(moment().subtract(1, 'M').format('YYYY-MM-DD'))
+    $('#startDate').val(moment().subtract(2, 'M').format('YYYY-MM-DD'))
 }
 
 (function init() {
@@ -228,7 +246,7 @@ function reset() {
 
     // filter inputs
     $('#endDate').val(moment().format('YYYY-MM-DD'));
-    $('#startDate').val(moment().subtract(1, 'M').format('YYYY-MM-DD'))
+    $('#startDate').val(moment().subtract(2, 'M').format('YYYY-MM-DD'))
     $('input[type="date"]').on('mousedown', function (e) { e.preventDefault(); });
     $('input[type="date"],select').on('change', function () { update() });
 
