@@ -2,23 +2,31 @@
  /** @type {import("jsZip")} */ var JSZip;
  /** @type {import("highcharts")} */ var Highcharts;
  /** @type {import("moment")} */ var moment;
+ /** @type {import("bootstrap")} */ var booststrap;
 
 let data = [];
 
 async function uploadFile(file) {
     $('#loading').removeClass('hide');
-    $('#file-name').text(file.name);
 
-    data = await parseZip(file);
-    data = data.filter(t => !!t.Date && !!t.Time && !!t['avg(temp)'] && !!t['avg(humidity)']);
-    data = data.map(t => ({
-        date: new Date(`${t.Date} ${t.Time}:00`).getTime(),
-        temp: +t['avg(temp)'],
-        humidity: +t['avg(humidity)']
-    }));
-    data.sort((a, b) => a.date - b.date);
+    try {
+        data = await parseZip(file);
+        data = data.filter(t => !!t.Date && !!t.Time && !!t['avg(temp)'] && !!t['avg(humidity)']);
+        data = data.map(t => ({
+            date: new Date(`${t.Date} ${t.Time}:00`).getTime(),
+            temp: +t['avg(temp)'],
+            humidity: +t['avg(humidity)']
+        }));
+        data.sort((a, b) => a.date - b.date);
 
-    update();
+        $('#file-name').text(file.name);
+        update();
+    }
+    catch {
+        (new bootstrap.Toast($('.toast')[0])).show();
+        $('#loading').addClass('hide');
+        $('#file-input').val('');
+    }
 }
 
 async function parseZip(file) {
@@ -56,6 +64,7 @@ function update() {
     $('#chart').removeClass('hide');
     $('.navbar-nav').removeClass('hide');
     $('.help-btn').addClass('hide');
+    $('#no-data').addClass('hide');
 
     //units
     let isCelcius = $('#degree').val() == 'C';
@@ -89,8 +98,15 @@ function update() {
     filteredData = chunkData;
 
 
-    //draw chart
-    drawChart(filteredData, () => $('#loading').addClass('hide'));
+    if (filteredData.length) {
+        //draw chart
+        drawChart(filteredData, () => $('#loading').addClass('hide'));
+    }
+    else {
+        $('#chart').addClass('hide');
+        $('#loading').addClass('hide');
+        $('#no-data').removeClass('hide');
+    }
 }
 
 function drawChart(filteredData, cb) {
@@ -166,7 +182,10 @@ function reset() {
     $('#chart').addClass('hide');
     $('.navbar-nav').addClass('hide');
     $('.help-btn').removeClass('hide');
-    $('#file-input').val('')
+    $('#no-data').addClass('hide');
+    $('#file-input').val('');
+    $('#endDate').val(moment().format('YYYY-MM-DD'));
+    $('#startDate').val(moment().subtract(1, 'M').format('YYYY-MM-DD'))
 }
 
 (function init() {
@@ -200,5 +219,6 @@ function reset() {
     $('#file-input').on('change', function (e) { uploadFile(this.files[0]) });
     //reset file
     $('.remove-btn').on('click', function () { reset() });
+
 })();
 

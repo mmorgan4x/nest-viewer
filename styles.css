@@ -15,7 +15,7 @@ body {
 }
 
 .content {
-  height: calc(100% - 70px);
+  height: calc(100% - 62px);
   position: relative;
 }
 
@@ -50,7 +50,7 @@ body {
 
 .drop-area {
   background-color: #eee;
-  height: calc(100vh - 170px);
+  height: calc(100vh - 162px);
   outline: 2px dashed #999;
   outline-offset: -12px;
   display: flex;
@@ -125,4 +125,16 @@ select.nav-link {
 
 .help-btn + .dropdown-menu {
   white-space: nowrap;
+}
+
+#no-data {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 3rem;
 }

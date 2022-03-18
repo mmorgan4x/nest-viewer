@@ -1,5 +1,2 @@
-help screen
 better chunking
-upload error msg
-no data display
 select enable/disable series
