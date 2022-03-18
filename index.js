@@ -10,13 +10,17 @@ async function uploadFile(file) {
     $('#loading').removeClass('hide');
 
     try {
+        //parse data from file
         data = await parseZip(file);
+        //filter out missing points
         data = data.filter(t => !!t.Date && !!t.Time && !!t['avg(temp)'] && !!t['avg(humidity)']);
+        //map to chart data
         data = data.map(t => ({
             date: new Date(`${t.Date} ${t.Time}:00`).getTime(),
             temp: +t['avg(temp)'],
             humidity: +t['avg(humidity)']
         }));
+        //sort by datetime
         data.sort((a, b) => a.date - b.date);
 
         $('#file-name').text(file.name);
@@ -48,7 +52,7 @@ function parseCSV(csvStr) {
     let rows = [];
     let arr = csvStr.split('\n');
     let headers = arr[0].split(',');
-    for (var i = 1; i < arr.length; i++) {
+    for (let i = 1; i < arr.length; i++) {
         let d = arr[i].split(',');
         let obj = {};
         for (let j = 0; j < d.length; j++) {
@@ -97,9 +101,8 @@ function update() {
     }
     filteredData = chunkData;
 
-
+    //draw chart
     if (filteredData.length) {
-        //draw chart
         drawChart(filteredData, () => $('#loading').addClass('hide'));
     }
     else {
@@ -111,13 +114,16 @@ function update() {
 
 function drawChart(filteredData, cb) {
 
-    let plotlines = [];
+    //add plot line for each month and day
+    let monthPlotlines = [];
+    let dayPlotlines = [];
     if (filteredData.length) {
-        let start = new Date(filteredData[0].date)
-        start = new Date(start.getFullYear(), start.getMonth(), start.getDate(), 0, 0, 0);
-        let end = new Date(filteredData[filteredData.length - 1].date);
-        for (let i = start.getTime(); i < end.getTime(); i += 86400000) {
-            plotlines.push(i)
+        let end = moment(filteredData[filteredData.length - 1].date).valueOf();
+        for (let i = moment(filteredData[0].date); i.valueOf() < end; i.add(1, 'M')) {
+            monthPlotlines.push(i.startOf('M').valueOf())
+        }
+        for (let i = moment(filteredData[0].date); i.valueOf() < end; i.add(1, 'd')) {
+            dayPlotlines.push(i.startOf('d').valueOf())
         }
     }
 
@@ -134,18 +140,29 @@ function drawChart(filteredData, cb) {
         colors: ['#db3236', '#f4c20d', '#4885ed ', , '#3cba54 '],
         xAxis: {
             type: 'datetime',
-            plotLines: plotlines.map(t => ({ value: t, color: '#eee' }))
+            plotLines: []
+                .concat(dayPlotlines.map(t => ({ value: t, color: '#eee', width: 1 })))
+                .concat(monthPlotlines.map(t => ({ value: t, color: '#ccc', width: 2 }))),
+            dateTimeLabelFormats: {
+                minute: '%l:%M %P',
+                hour: '%l %P',
+                day: '%b %e',
+                week: '%b %e',
+                month: '%b \'%y',
+                year: '%Y'
+            }
         },
         yAxis: {
             min: 0,
             title: false
         },
         tooltip: {
-            xDateFormat: '%Y-%m-%d %H:%M',
+            xDateFormat: '%b %e, %Y - %l:%M %p',
             shared: true,
             crosshairs: true,
             valueDecimals: 2
         },
+        time: { useUTC: false },
 
         series: [{
             name: 'Temperature',
