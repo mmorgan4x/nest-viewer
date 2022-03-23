@@ -38,6 +38,7 @@ body {
   justify-content: center;
   align-items: center;
   font-size: 2rem;
+  z-index: 100;
 }
 
 .hide {
@@ -137,4 +138,10 @@ select.nav-link {
   justify-content: center;
   align-items: center;
   font-size: 3rem;
+}
+
+.version {
+  position: fixed;
+  bottom: 8px;
+  right: 8px;
 }
