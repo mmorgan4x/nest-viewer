@@ -26,10 +26,11 @@ async function uploadFile(file) {
         $('#file-name').text(file.name);
         update();
     }
-    catch {
+    catch (e) {
         (new bootstrap.Toast($('.toast')[0])).show();
         $('#loading').addClass('hide');
         $('#file-input').val('');
+        console.error(e);
     }
 }
 
@@ -37,7 +38,7 @@ async function parseZip(file) {
     let jsZip = new JSZip();
     let zip = await jsZip.loadAsync(file);
     let files = Object.values(zip.files);
-    let csvs = files.filter(t => t.name.endsWith('.csv'));
+    let csvs = files.filter(t => t.name.match(/thermostats.+sensors\.csv/));
 
     let d = [];
     for (let csv of csvs) {
@@ -91,7 +92,7 @@ function update() {
     //data chunking
     let [, increment, unit] = $('#increment').val().toString().match(/(\d+)(.+)/);
     let grouped = groupBy(filteredData, t => roundDate(moment(t.date), +increment, unit).valueOf());
-    
+
     filteredData = grouped.map(t => ({
         date: t.key,
         temp: t.value.reduce((a, b) => a + b.temp, 0) / t.value.length,
