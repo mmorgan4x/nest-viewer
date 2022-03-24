@@ -77,8 +77,8 @@ function update() {
     let filteredData = data.map(t => ({ date: t.date, temp: isCelcius ? t.temp : (t.temp * 9 / 5) + 32, humidity: t.humidity }));
 
     //date range
-    let maxDate = moment(data[data.length - 1].date);
-    let minDate = moment(data[0].date);
+    let maxDate = filteredData.length ? moment(filteredData[filteredData.length - 1].date) : moment();
+    let minDate = filteredData.length ? moment(filteredData[0].date) : moment().subtract(2, 'M');
 
     let filterEnd = $('#endDate').val() ? moment($('#endDate').val()) : null;
     let filterStart = $('#startDate').val() ? moment($('#startDate').val()) : null
