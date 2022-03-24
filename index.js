@@ -38,6 +38,7 @@ async function parseZip(file) {
     let jsZip = new JSZip();
     let zip = await jsZip.loadAsync(file);
     let files = Object.values(zip.files);
+    console.log(files);
     let csvs = files.filter(t => t.name.match(/thermostats.+sensors\.csv/));
 
     let d = [];
