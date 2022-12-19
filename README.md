@@ -2,6 +2,6 @@
 
 View temperature and humidity data exported from the Nest thermostat.
 
-# https://captm44.github.io/nest-viewer/
+# https://mmorgan4x.github.io/nest-viewer/
 
 ![alt text](images/screenshot.png)
