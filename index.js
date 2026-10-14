@@ -11,15 +11,11 @@ async function uploadFile(file) {
 
     try {
         //parse data from file
-        data = await parseZip(file);
+        data = file.name.toLowerCase().endsWith('.jsonl')
+            ? parseJSONL(await file.text())
+            : await parseZip(file);
         //filter out missing points
-        data = data.filter(t => !!t.Date && !!t.Time && !!t['avg(temp)'] && !!t['avg(humidity)']);
-        //map to chart data
-        data = data.map(t => ({
-            date: new Date(`${t.Date} ${t.Time}:00`).getTime(),
-            temp: +t['avg(temp)'],
-            humidity: +t['avg(humidity)']
-        }));
+        data = data.filter(t => !isNaN(t.date) && isFinite(t.temp) && isFinite(t.humidity));
         //sort by datetime
         data.sort((a, b) => a.date - b.date);
 
@@ -47,15 +43,54 @@ async function parseZip(file) {
     let zip = await jsZip.loadAsync(file);
     let files = Object.values(zip.files);
     console.log(files);
+
+    //newer takeout exports: HvacRuntime.jsonl
+    let jsonls = files.filter(t => t.name.match(/hvacruntime[^/]*\.jsonl$/i));
+    if (jsonls.length) {
+        let d = [];
+        for (let jsonl of jsonls) {
+            d = d.concat(parseJSONL(await jsonl.async('text')));
+        }
+        return d;
+    }
+
+    //older takeout exports: monthly sensors.csv
     let csvs = files.filter(t => t.name.match(/thermostats.+sensors\.csv/));
 
     let d = [];
     for (let csv of csvs) {
         let csvStr = await csv.async('text');
-        let rows = parseCSV(csvStr);
-        d = d.concat(rows);
+        let rows = parseCSV(csvStr).filter(t => !!t.Date && !!t.Time && !!t['avg(temp)'] && !!t['avg(humidity)']);
+        d = d.concat(rows.map(t => ({
+            date: new Date(`${t.Date} ${t.Time}:00`).getTime(),
+            temp: +t['avg(temp)'],
+            humidity: +t['avg(humidity)']
+        })));
     }
     return d;
+}
+
+function parseJSONL(str) {
+    let rows = [];
+    for (let line of str.split('\n')) {
+        line = line.trim();
+        if (!line) { continue; }
+        //some exports wrap each line as a csv-quoted string: "{""key"":1}"
+        if (line.startsWith('"')) { line = line.slice(1, -1).replace(/""/g, '"'); }
+        try {
+            let t = JSON.parse(line);
+            if (t.interval_start == null || t.indoor_temp == null || t.indoor_humidity == null) { continue; }
+            rows.push({
+                date: new Date(t.interval_start).getTime(),
+                temp: +t.indoor_temp,
+                humidity: +t.indoor_humidity
+            });
+        }
+        catch (e) {
+            console.warn('skipping invalid line', line);
+        }
+    }
+    return rows;
 }
 
 function parseCSV(csvStr) {
