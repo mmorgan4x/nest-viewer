@@ -23,6 +23,14 @@ async function uploadFile(file) {
         //sort by datetime
         data.sort((a, b) => a.date - b.date);
 
+        //default the date range to the last 2 months of the data, not of today
+        if (data.length) {
+            let last = moment(data[data.length - 1].date);
+            let first = moment.max(moment(data[0].date), last.clone().subtract(2, 'M'));
+            $('#endDate').val(last.format('YYYY-MM-DD'));
+            $('#startDate').val(first.format('YYYY-MM-DD'));
+        }
+
         $('#file-name').text(file.name);
         update();
     }
@@ -88,7 +96,7 @@ function update() {
     $('#endDate').val(filterEnd.format('YYYY-MM-DD'));
     $('#startDate').val(filterStart.format('YYYY-MM-DD'));
 
-    filteredData = filteredData.filter(t => t.date > filterStart.valueOf() && t.date < filterEnd.valueOf());
+    filteredData = filteredData.filter(t => t.date >= filterStart.clone().startOf('d').valueOf() && t.date <= filterEnd.clone().endOf('d').valueOf());
 
     //data chunking
     let [, increment, unit] = $('#increment').val().toString().match(/(\d+)(.+)/);
